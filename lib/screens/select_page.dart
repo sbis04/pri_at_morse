@@ -12,15 +12,15 @@ class SelectPage extends StatefulWidget {
 }
 
 class _SelectPageState extends State<SelectPage> {
-  TextEditingController _textControllerAtSign = TextEditingController();
-  FocusNode _textFocusNodeAtSign = FocusNode();
+  TextEditingController _textControllerAtSignOther = TextEditingController();
+  FocusNode _textFocusNodeAtSignOther = FocusNode();
 
   bool _isEditingAtSign = false;
 
   String _validateString(String value) {
     value = value.trim();
 
-    if (_textControllerAtSign.text != null) {
+    if (_textControllerAtSignOther.text != null) {
       if (value.isEmpty) {
         return '@sign can\'t be empty';
       } else if (value.trim().contains(' ')) {
@@ -35,7 +35,7 @@ class _SelectPageState extends State<SelectPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _textFocusNodeAtSign.unfocus();
+        _textFocusNodeAtSignOther.unfocus();
       },
       child: Scaffold(
         backgroundColor: CustomColors.background,
@@ -61,8 +61,8 @@ class _SelectPageState extends State<SelectPage> {
                   ),
                 ),
                 TextField(
-                  controller: _textControllerAtSign,
-                  focusNode: _textFocusNodeAtSign,
+                  controller: _textControllerAtSignOther,
+                  focusNode: _textFocusNodeAtSignOther,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   cursorColor: CustomColors.highlight,
@@ -73,7 +73,7 @@ class _SelectPageState extends State<SelectPage> {
                     });
                   },
                   onSubmitted: (value) {
-                    _textFocusNodeAtSign.unfocus();
+                    _textFocusNodeAtSignOther.unfocus();
                   },
                   style: TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 16.0),
                   textCapitalization: TextCapitalization.sentences,
@@ -119,7 +119,7 @@ class _SelectPageState extends State<SelectPage> {
                       ),
                     ),
                     errorText:
-                        _isEditingAtSign ? _validateString(_textControllerAtSign.text) : null,
+                        _isEditingAtSign ? _validateString(_textControllerAtSignOther.text) : null,
                     errorStyle: TextStyle(
                       fontSize: 14,
                       color: Colors.redAccent,
@@ -131,19 +131,19 @@ class _SelectPageState extends State<SelectPage> {
                   width: double.maxFinite,
                   child: RaisedButton(
                     color: CustomColors.highlight,
-                    onPressed:
-                        _textControllerAtSign.text != null && _textControllerAtSign.text != ''
-                            ? () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatPage(
-                                      userAtSign: widget.currentUserAtSign,
-                                      otherAtSign: _textControllerAtSign.text,
-                                    ),
-                                  ),
-                                );
-                              }
-                            : null,
+                    onPressed: _textControllerAtSignOther.text != null &&
+                            _textControllerAtSignOther.text != ''
+                        ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  userAtSign: '@' + widget.currentUserAtSign,
+                                  otherAtSign: '@' + _textControllerAtSignOther.text,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -154,8 +154,8 @@ class _SelectPageState extends State<SelectPage> {
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: _textControllerAtSign.text != null &&
-                                  _textControllerAtSign.text != ''
+                          color: _textControllerAtSignOther.text != null &&
+                                  _textControllerAtSignOther.text != ''
                               ? CustomColors.dark
                               : CustomColors.medium,
                           letterSpacing: 1.5,
