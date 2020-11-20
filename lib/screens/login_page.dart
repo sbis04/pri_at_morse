@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:primorse/screens/select_page.dart';
 import 'package:primorse/utils/custom_colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -9,7 +10,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _textControllerAtSign = TextEditingController();
   FocusNode _textFocusNodeAtSign = FocusNode();
-  String _atSign;
+
+  bool _isEditingAtSign = false;
+
+  String _validateString(String value) {
+    value = value.trim();
+
+    if (_textControllerAtSign.text != null) {
+      if (value.isEmpty) {
+        return '@sign can\'t be empty';
+      } else if (value.trim().contains(' ')) {
+        return '@sign can\'t contain a space';
+      }
+    }
+
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,81 +65,78 @@ class _LoginPageState extends State<LoginPage> {
                   autofocus: false,
                   onChanged: (value) {
                     setState(() {
-                      _atSign = value;
+                      _isEditingAtSign = true;
                     });
                   },
                   onSubmitted: (value) {
                     _textFocusNodeAtSign.unfocus();
                   },
                   style: TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 16.0),
-                  textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 16.0,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 16.0,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: CustomColors.medium,
+                        width: 3,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: CustomColors.medium,
-                          width: 3,
-                        ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: CustomColors.medium,
+                        width: 3,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: CustomColors.medium,
-                          width: 3,
-                        ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: CustomColors.highlight,
+                        width: 3,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: CustomColors.highlight,
-                          width: 3,
-                        ),
+                    ),
+                    filled: true,
+                    hintStyle: TextStyle(
+                      color: Colors.white70,
+                    ),
+                    hintText: "Enter your @sign",
+                    fillColor: Colors.white24,
+                    prefix: Text(
+                      '@ ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Montserrat',
+                        fontSize: 18.0,
                       ),
-                      filled: true,
-                      hintStyle: TextStyle(
-                        color: Colors.white70,
-                      ),
-                      hintText: "Enter your @sign",
-                      fillColor: Colors.white24,
-                      prefix: Text(
-                        '@ ',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Montserrat',
-                          fontSize: 18.0,
-                        ),
-                      )
-                      // errorText: _isEditingEmail
-                      //     ? _validateEmail(textControllerEmail.text)
-                      //     : null,
-                      // errorStyle: TextStyle(
-                      //   fontSize: 12,
-                      //   color: Colors.redAccent,
-                      // ),
-                      ),
+                    ),
+                    errorText:
+                        _isEditingAtSign ? _validateString(_textControllerAtSign.text) : null,
+                    errorStyle: TextStyle(
+                      fontSize: 14,
+                      color: Colors.redAccent,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20.0),
                 Container(
                   width: double.maxFinite,
                   child: RaisedButton(
                     color: CustomColors.highlight,
-                    onPressed:
-                        _textControllerAtSign.text != null || _textControllerAtSign.text != ''
-                            ? () {
-                                // Navigator.of(context).pushReplacement(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => OTPScreen(
-                                //       textController.text,
-                                //     ),
-                                //   ),
-                                // );
-                              }
-                            : null,
+                    onPressed: _validateString(_textControllerAtSign.text) == null
+                        ? () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => SelectPage(
+                                  currentUserAtSign: _textControllerAtSign.text,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -139,16 +152,16 @@ class _LoginPageState extends State<LoginPage> {
                               ? CustomColors.dark
                               : CustomColors.medium,
                           letterSpacing: 1.5,
-                          shadows: _textControllerAtSign.text != null ||
-                                  _textControllerAtSign.text != ''
-                              ? <Shadow>[
-                                  Shadow(
-                                    offset: Offset(1.5, 1.5),
-                                    blurRadius: 3.0,
-                                    color: CustomColors.highlight,
-                                  ),
-                                ]
-                              : null,
+                          // shadows: _textControllerAtSign.text != null ||
+                          //         _textControllerAtSign.text != ''
+                          //     ? <Shadow>[
+                          //         Shadow(
+                          //           offset: Offset(1.5, 1.5),
+                          //           blurRadius: 3.0,
+                          //           color: CustomColors.highlight,
+                          //         ),
+                          //       ]
+                          //     : null,
                         ),
                       ),
                     ),
