@@ -6,15 +6,23 @@ class Authentication {
 
   Future<bool> userLogin(String atSign) async {
     bool isLoginSuccessful = false;
-    await _serverDemoService.onboard().then((value) async {
+    await _serverDemoService.onboard().then((value) {
+      isLoginSuccessful = value;
+    }).catchError((error) async {
       await _serverDemoService
-          .authenticate(
-            atSign,
-            cramSecret: at_demo_data.cramKeyMap[atSign],
-          )
-          .then((value) => isLoginSuccessful = value)
-          .catchError((e) => print('Authentication error: $e'));
-    }).catchError((e) => print('Onboarding error: $e'));
+          .authenticate(atSign, cramSecret: at_demo_data.cramKeyMap[atSign])
+          .then((value) => isLoginSuccessful = value);
+    });
+    print('done: $isLoginSuccessful');
+    // await _serverDemoService.onboard().then((value) async {
+    //   await _serverDemoService
+    //       .authenticate(
+    //         atSign,
+    //         cramSecret: at_demo_data.cramKeyMap[atSign],
+    //       )
+    //       .then((value) => isLoginSuccessful = value)
+    //       .catchError((e) => print('Authentication error: $e'));
+    // }).catchError((e) => print('Onboarding error: $e'));
     return isLoginSuccessful;
   }
 }
