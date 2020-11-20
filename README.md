@@ -30,6 +30,14 @@ In order to use this app, you need to do some set up:
 
 The full guide is available [here](https://atsign.dev/gettingstarted.html).
 
+## @Plugins
+
+- [path_provider](https://pub.dev/packages/path_provider)
+- [at_demo_data](https://pub.dev/packages/at_demo_data)
+- [at_client_mobile](https://pub.dev/packages/at_client_mobile)
+- [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
+- [flutter_emoji](https://pub.dev/packages/flutter_emoji)
+
 ## @License
 
 Copyright (c) 2020 Souvik Biswas
