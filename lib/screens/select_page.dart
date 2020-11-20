@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:primorse/res/custom_colors.dart';
+import 'package:primorse/screens/chat_page.dart';
 
 class SelectPage extends StatefulWidget {
   final String currentUserAtSign;
@@ -131,15 +132,16 @@ class _SelectPageState extends State<SelectPage> {
                   child: RaisedButton(
                     color: CustomColors.highlight,
                     onPressed:
-                        _textControllerAtSign.text != null || _textControllerAtSign.text != ''
+                        _textControllerAtSign.text != null && _textControllerAtSign.text != ''
                             ? () {
-                                // Navigator.of(context).pushReplacement(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => SelectPage(
-                                //       currentUserAtSign: _textControllerAtSign.text,
-                                //     ),
-                                //   ),
-                                // );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(
+                                      userAtSign: widget.currentUserAtSign,
+                                      otherAtSign: _textControllerAtSign.text,
+                                    ),
+                                  ),
+                                );
                               }
                             : null,
                     shape: RoundedRectangleBorder(
@@ -157,16 +159,6 @@ class _SelectPageState extends State<SelectPage> {
                               ? CustomColors.dark
                               : CustomColors.medium,
                           letterSpacing: 1.5,
-                          shadows: _textControllerAtSign.text != null ||
-                                  _textControllerAtSign.text != ''
-                              ? <Shadow>[
-                                  Shadow(
-                                    offset: Offset(1.5, 1.5),
-                                    blurRadius: 3.0,
-                                    color: CustomColors.highlight,
-                                  ),
-                                ]
-                              : null,
                         ),
                       ),
                     ),
