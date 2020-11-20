@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:primorse/res/custom_colors.dart';
+import 'package:primorse/utils/database.dart';
 
 class ChatPage extends StatefulWidget {
   final String userAtSign;
@@ -12,10 +13,14 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  Database database = Database();
+
   TextEditingController _textControllerMessage;
   FocusNode _textFocusNodeMessage;
 
   String _textMessage;
+
+  bool _isStoring = false;
 
   @override
   void initState() {
@@ -39,6 +44,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: () {
         _textFocusNodeMessage.unfocus();
@@ -49,7 +56,7 @@ class _ChatPageState extends State<ChatPage> {
           backgroundColor: CustomColors.dark,
           centerTitle: false,
           title: Text(
-            '@ ${widget.otherAtSign}',
+            '${widget.otherAtSign}',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -72,7 +79,49 @@ class _ChatPageState extends State<ChatPage> {
         ),
         body: Column(
           children: [
-            Expanded(child: Container()),
+            Expanded(
+              child: FutureBuilder(
+                future: database.retrieveData(widget.userAtSign),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<String> messageList = snapshot.data;
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        String message = messageList[index];
+                        return Align(
+                          alignment: Alignment.centerRight,
+                          child: Wrap(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Container(
+                                  width: screenWidth / 1.5,
+                                  color: CustomColors.medium,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      message,
+                                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(CustomColors.highlight),
+                    ),
+                  );
+                },
+              ),
+            ),
             Container(
               decoration: BoxDecoration(
                 color: CustomColors.dark,
@@ -139,35 +188,56 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
-                    child: CircleAvatar(
-                      radius: 22,
-                      backgroundColor: _textMessage != ''
-                          ? CustomColors.highlight.withOpacity(0.2)
-                          : Colors.white12,
-                      child: IconButton(
-                        color: CustomColors.highlight,
-                        icon: Padding(
-                          padding: const EdgeInsets.only(left: 4.0),
-                          child: Icon(
-                            Icons.send,
+                    child: _isStoring
+                        ? CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              CustomColors.highlight,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 22,
+                            backgroundColor: _textMessage != ''
+                                ? CustomColors.highlight.withOpacity(0.2)
+                                : Colors.white12,
+                            child: IconButton(
+                              color: CustomColors.highlight,
+                              icon: Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: Icon(
+                                  Icons.send,
+                                ),
+                              ),
+                              disabledColor: Colors.white24,
+                              onPressed: _textMessage != ''
+                                  ? () async {
+                                      setState(() {
+                                        _isStoring = true;
+                                      });
+
+                                      await database
+                                          .storeData(
+                                              message: _textMessage,
+                                              messageFrom: widget.userAtSign,
+                                              messageTo: widget.otherAtSign)
+                                          .whenComplete(() {
+                                        setState(() {
+                                          _isStoring = false;
+                                        });
+                                      });
+
+                                      // database.sendMessage(
+                                      //   widget.uid,
+                                      //   _textMessage,
+                                      // );
+
+                                      _textControllerMessage.clear();
+                                      _textMessage = '';
+
+                                      setState(() {});
+                                    }
+                                  : null,
+                            ),
                           ),
-                        ),
-                        disabledColor: Colors.white24,
-                        onPressed: _textMessage != ''
-                            ? () {
-                                // database.sendMessage(
-                                //   widget.uid,
-                                //   _textMessage,
-                                // );
-
-                                // _textControllerMessage.clear();
-                                // _textMessage = '';
-
-                                // setState(() {});
-                              }
-                            : null,
-                      ),
-                    ),
                   )
                 ],
               ),
