@@ -21,6 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   String _textMessage;
 
   bool _isStoring = false;
+  bool showMorse = false;
 
   @override
   void initState() {
@@ -62,6 +63,31 @@ class _ChatPageState extends State<ChatPage> {
               fontSize: 24,
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: InkWell(
+                onTap: () {
+                  if (showMorse)
+                    setState(() {
+                      showMorse = false;
+                    });
+                  else
+                    setState(() {
+                      showMorse = true;
+                    });
+                },
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: CustomColors.highlight,
+                  child: Text(
+                    'M',
+                    style: TextStyle(color: CustomColors.dark),
+                  ),
+                ),
+              ),
+            ),
+          ],
           bottom: PreferredSize(
             child: Column(
               children: [
@@ -81,15 +107,17 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Expanded(
               child: FutureBuilder(
-                future: database.retrieveData(widget.userAtSign),
+                future: database.retrieveData(widget.otherAtSign),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    List<String> messageList = snapshot.data;
+                    List<Map<String, String>> messageListMap = snapshot.data;
                     return ListView.builder(
                       reverse: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
-                        String message = messageList[index];
+                        String morseValue = messageListMap[index]['morse'] ?? '---';
+                        String message = messageListMap[index]['content'];
+
                         return Align(
                           alignment: Alignment.centerRight,
                           child: Wrap(
@@ -102,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      message,
+                                      showMorse ? morseValue : message,
                                       style: TextStyle(color: Colors.white, fontSize: 16.0),
                                     ),
                                   ),
