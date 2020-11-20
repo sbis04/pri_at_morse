@@ -1,7 +1,7 @@
 # PRI @ morse
 > **Privacy @ morse** using @sign P2P encryption
 
-This project is created keeping privacy at the top of the head. What it looks from outside is just a chatting chatting. But it is built with privacy at it's core.
+This project is created keeping **privacy** at the top of the head. What it looks from outside is just a chatting chatting. But it is built with privacy at it's core.
 
 * P2P encryption (using **@sign**)
 * Morse translation (uses **custom morse code standard**, on top of the INTERNATIONAL MORSE STD.)
@@ -14,11 +14,24 @@ This project is created keeping privacy at the top of the head. What it looks fr
 
 ![App](https://github.com/sbis04/pri_at_morse/raw/master/screenshots/pri%40morse.png)
 
+## @Concept
+
+There are very few apps in the market who are really concerned about privacy of it's users. This concept came in my mind thinking of just how to protect privacy (but not overdoing it).
+
+The app provides privacy at the server level using the `@protocol` designed by "**The @ Company**". And, it also provides in the app level (the frontend) by translating the texts to a `Morse code`, which can be converted to a normal text with just a click of a button.
+
+*I believe this concept will help to secure user data at the utmost level possible.*
+
+## @Planing
+
+![Planing](https://github.com/sbis04/pri_at_morse/raw/master/screenshots/planing.png)
+
 ## @Usage
 
 In order to use this app, you need to do some set up:
 
-> This app is tested on Android only (due to time constraint).
+> This app is tested on **Android** only (due to time constraint).
+> Used the id as `com.example.newserverdemo`, because any other id is causing an issue in connection.
 
 ***@1:*** Run the **Docker** container to start the virtual environment
 
