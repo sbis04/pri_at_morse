@@ -1,6 +1,10 @@
-# primorse
+# PRI @ morse
+> **Privacy @ morse** using @sign P2P encryption
 
-A new Flutter project.
+This project is created keeping privacy at the top of the head. What it looks from outside is just a chatting chatting. But it is built with privacy at it's core.
+
+* P2P encryption (using **@sign**)
+* Morse translation (uses **custom morse code standard**, on top of the INTERNATIONAL MORSE STD.)
 
 ## Getting Started
 
