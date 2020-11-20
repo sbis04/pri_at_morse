@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.souvikbiswas.primorse">
+    package="com.example.newserverdemo">
    <application
         android:label="primorse"
         android:icon="@mipmap/ic_launcher">
