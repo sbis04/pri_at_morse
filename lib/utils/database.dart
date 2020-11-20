@@ -16,7 +16,8 @@ class Database {
     }
   }
 
-  Future<List<String>> retrieveData(String sharedBySign) async {
+  Future<List<Map<String, String>>> retrieveData(String sharedBySign) async {
+    List<Map<String, String>> mapList = [];
     List<String> scanList;
     List<String> response = await _atClientService.getKeys(sharedBy: sharedBySign);
     print('.' + conf.namespace + sharedBySign);
@@ -26,11 +27,23 @@ class Database {
               .replaceAll('.' + conf.namespace + sharedBySign, '')
               .replaceAll(sharedBySign + ':', ''))
           .toList();
+
+      for (int i = 0; i < scanList.length; i++) {
+        String morseString = await lookUpValue(scanList[i], sharedBySign);
+        print(morseString);
+        Map<String, String> map = {
+          'content': scanList[i],
+          'morse': scanList[i].toMorse(),
+        };
+
+        mapList.add(map);
+      }
+
       print(scanList);
     } else {
       scanList = [];
     }
-    return scanList;
+    return mapList;
   }
 
   Future<String> lookUpValue(String messageKey, String sharedFrom) async {
