@@ -6,6 +6,14 @@ This project is created keeping privacy at the top of the head. What it looks fr
 * P2P encryption (using **@sign**)
 * Morse translation (uses **custom morse code standard**, on top of the INTERNATIONAL MORSE STD.)
 
+> **NOTE:** This is just the concept of the app created as a part of the `@challenge` (Flutter Vikings Community). So, there is limited functionality and the experience can be a bit buggy.
+
+***Disclaimer:** This solution was just created in a matter of some hours (approximately 11 hrs), including the concept, planning, set up and implementation.*
+
+## Usage
+
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
