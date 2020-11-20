@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:primorse/screens/select_page.dart';
-import 'package:primorse/utils/custom_colors.dart';
+import 'package:primorse/res/custom_colors.dart';
 
 class LoginPage extends StatefulWidget {
   @override
