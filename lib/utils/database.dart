@@ -6,12 +6,12 @@ import '../utils/configure.dart' as conf;
 class Database {
   ServerDemoService _atClientService = ServerDemoService.getInstance();
 
-  Future<void> storeData(String message, String sendTo, String sendFrom) async {
+  Future<void> storeData({String message, String messageTo, String messageFrom}) async {
     if (message != null) {
       AtKey pair = AtKey();
       pair.key = message;
-      pair.sharedBy = sendFrom;
-      pair.sharedWith = sendTo;
+      pair.sharedBy = messageFrom;
+      pair.sharedWith = messageTo;
       await _atClientService.put(pair, message.toMorse());
     }
   }
@@ -19,12 +19,16 @@ class Database {
   Future<List<String>> retrieveData(String sharedBySign) async {
     List<String> scanList;
     List<String> response = await _atClientService.getKeys(sharedBy: sharedBySign);
+    print('.' + conf.namespace + sharedBySign);
     if (response.length > 0) {
       scanList = response
           .map((key) => key
               .replaceAll('.' + conf.namespace + sharedBySign, '')
               .replaceAll(sharedBySign + ':', ''))
           .toList();
+      print(scanList);
+    } else {
+      scanList = [];
     }
     return scanList;
   }
