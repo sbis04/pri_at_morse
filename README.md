@@ -16,6 +16,20 @@ This project is created keeping privacy at the top of the head. What it looks fr
 
 ## @Usage
 
+In order to use this app, you need to do some set up:
+
+> This app is tested on Android only (due to time constraint).
+
+***@1:*** Run the **Docker** container to start the virtual environment
+
+***@2:*** Set up networking (add the required DNS)
+
+***@3:*** Clone this repo
+
+***@4:*** Use the test `@signs`
+
+The full guide is available [here](https://atsign.dev/gettingstarted.html).
+
 
 
 ## Getting Started
