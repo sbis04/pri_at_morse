@@ -152,16 +152,6 @@ class _LoginPageState extends State<LoginPage> {
                               ? CustomColors.dark
                               : CustomColors.medium,
                           letterSpacing: 1.5,
-                          // shadows: _textControllerAtSign.text != null ||
-                          //         _textControllerAtSign.text != ''
-                          //     ? <Shadow>[
-                          //         Shadow(
-                          //           offset: Offset(1.5, 1.5),
-                          //           blurRadius: 3.0,
-                          //           color: CustomColors.highlight,
-                          //         ),
-                          //       ]
-                          //     : null,
                         ),
                       ),
                     ),
