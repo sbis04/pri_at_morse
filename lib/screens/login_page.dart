@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:primorse/screens/select_page.dart';
 import 'package:primorse/res/custom_colors.dart';
+import 'package:primorse/utils/authentication.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -8,10 +9,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Authentication authentication = Authentication();
+
   TextEditingController _textControllerAtSign = TextEditingController();
   FocusNode _textFocusNodeAtSign = FocusNode();
 
   bool _isEditingAtSign = false;
+  bool _isLoggingIn = false;
 
   String _validateString(String value) {
     value = value.trim();
@@ -123,39 +127,59 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 20.0),
                 Container(
-                  width: double.maxFinite,
-                  child: RaisedButton(
-                    color: CustomColors.highlight,
-                    onPressed: _validateString(_textControllerAtSign.text) == null
-                        ? () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => SelectPage(
-                                  currentUserAtSign: _textControllerAtSign.text,
-                                ),
+                  width: _isLoggingIn ? null : double.maxFinite,
+                  child: _isLoggingIn
+                      ? CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            CustomColors.highlight,
+                          ),
+                        )
+                      : RaisedButton(
+                          color: CustomColors.highlight,
+                          onPressed: _validateString(_textControllerAtSign.text) == null
+                              ? () {
+                                  _textFocusNodeAtSign.unfocus();
+                                  setState(() {
+                                    _isLoggingIn = true;
+                                  });
+                                  authentication.userLogin('@' + _textControllerAtSign.text).then(
+                                    (isSuccessful) {
+                                      if (isSuccessful) {
+                                        print('LOGIN SUCCESSFUL: ${_textControllerAtSign.text}');
+                                        setState(() {
+                                          _isLoggingIn = false;
+                                        });
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => SelectPage(
+                                              currentUserAtSign: _textControllerAtSign.text,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                }
+                              : null,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                            child: Text(
+                              'LOGIN',
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: _textControllerAtSign.text != null &&
+                                        _textControllerAtSign.text != ''
+                                    ? CustomColors.dark
+                                    : CustomColors.medium,
+                                letterSpacing: 1.5,
                               ),
-                            );
-                          }
-                        : null,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                      child: Text(
-                        'LOGIN',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: _textControllerAtSign.text != null &&
-                                  _textControllerAtSign.text != ''
-                              ? CustomColors.dark
-                              : CustomColors.medium,
-                          letterSpacing: 1.5,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
