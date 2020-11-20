@@ -10,7 +10,11 @@ This project is created keeping privacy at the top of the head. What it looks fr
 
 ***Disclaimer:** This solution was just created in a matter of some hours (approximately 11 hrs), including the concept, planning, set up and implementation.*
 
-## Usage
+## @ a glance
+
+![App](https://github.com/sbis04/pri_at_morse/raw/master/screenshots/pri%40morse.png)
+
+## @Usage
 
 
 
