@@ -1,3 +1,4 @@
+import 'package:at_demo_data/at_demo_data.dart';
 import 'package:flutter/material.dart';
 import 'package:primorse/res/custom_colors.dart';
 import 'package:primorse/screens/chat_page.dart';
@@ -33,6 +34,8 @@ class _SelectPageState extends State<SelectPage> {
 
   @override
   Widget build(BuildContext context) {
+    // List<String> atSigns = allAtsigns;
+    // print(atSigns);
     return GestureDetector(
       onTap: () {
         _textFocusNodeAtSignOther.unfocus();
