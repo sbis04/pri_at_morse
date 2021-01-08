@@ -153,7 +153,7 @@ class _ChatPageState extends State<ChatPage> {
                                       padding: const EdgeInsets.all(5.0),
                                       child: Container(
                                         width: screenWidth / 1.5,
-                                        color: CustomColors.medium.withOpacity(0.6),
+                                        color: CustomColors.medium.withOpacity(0.4),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(

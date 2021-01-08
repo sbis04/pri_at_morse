@@ -28,7 +28,7 @@ class Database {
     // print('HELLO:$sharedBySign');
     List<Map<String, String>> mapList = [];
     List<String> myList;
-    // List<String> otherList;
+    List<String> otherList;
 
     List<String> myResponse = await _atClientService.getKeys(sharedBy: myAtSign);
     List<String> otherResponse = await _atClientService.getKeys(sharedBy: otherAtSign);
@@ -39,7 +39,7 @@ class Database {
 
     if (myResponse.length > 0) {
       myList = myResponse.map((key) {
-        print('MY KEY:$key');
+        // print('MY KEY:$key');
         return key
             .replaceAll('.' + conf.namespace + myAtSign, '')
             .replaceAll(otherAtSign + ':', '');
@@ -47,7 +47,7 @@ class Database {
 
       for (int i = 0; i < myList.length; i++) {
         String message = await lookUpValue(myList[i], myAtSign, otherAtSign);
-        // print(message);
+        print('MESSAGE_MY: $message');
         Map<String, String> map = {
           'timestamp': myList[i],
           'from': myAtSign,
@@ -65,8 +65,8 @@ class Database {
     }
 
     if (otherResponse.length > 0) {
-      List<String> otherList = otherResponse.map((key) {
-        print('OTHER KEY:$key');
+      otherList = otherResponse.map((key) {
+        // print('OTHER KEY:$key');
         return key.replaceAll('.' + conf.namespace + otherAtSign, '');
         // .replaceAll(myAtSign + ':', '');
       }).toList();
@@ -76,8 +76,8 @@ class Database {
 
       for (int i = 0; i < otherList.length; i++) {
         String message = await lookUpValue(otherList[i], otherAtSign, myAtSign);
-        print(message);
-        Map<String, String> map = {
+        print('MESSAGE_OTHER: $message');
+        Map<String, String> map2 = {
           'timestamp': otherList[i],
           'from': otherAtSign,
           'to': myAtSign,
@@ -85,10 +85,12 @@ class Database {
           'morse': message.toMorse(),
         };
 
-        mapList.add(map);
+        mapList.add(map2);
       }
 
       print('OTHER LIST: $otherList');
+    } else {
+      otherList = [];
     }
 
     mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
