@@ -8,49 +8,103 @@ class Database {
 
   Future<void> storeData({String message, String messageTo, String messageFrom}) async {
     if (message != null) {
-      AtKey pair = AtKey();
-      pair.key = message;
-      pair.sharedBy = messageFrom;
-      pair.sharedWith = messageTo;
-      await _atClientService.put(pair, message.toMorse());
+      DateTime currentTimestamp = DateTime.now();
+
+      print(currentTimestamp.millisecondsSinceEpoch.toString());
+
+      AtKey pair = AtKey()
+        ..key = '${currentTimestamp.millisecondsSinceEpoch}'
+        ..sharedBy = messageFrom
+        ..sharedWith = messageTo;
+
+      await _atClientService.put(pair, message);
     }
   }
 
-  Future<List<Map<String, String>>> retrieveData(String sharedBySign) async {
+  Future<List<Map<String, String>>> retrieveData(
+    String myAtSign,
+    String otherAtSign,
+  ) async {
+    // print('HELLO:$sharedBySign');
     List<Map<String, String>> mapList = [];
-    List<String> scanList;
-    List<String> response = await _atClientService.getKeys(sharedBy: sharedBySign);
-    print('.' + conf.namespace + sharedBySign);
-    if (response.length > 0) {
-      scanList = response
-          .map((key) => key
-              .replaceAll('.' + conf.namespace + sharedBySign, '')
-              .replaceAll(sharedBySign + ':', ''))
-          .toList();
+    List<String> myList;
+    // List<String> otherList;
 
-      for (int i = 0; i < scanList.length; i++) {
-        String morseString = await lookUpValue(scanList[i], sharedBySign);
-        print(morseString);
+    List<String> myResponse = await _atClientService.getKeys(sharedBy: myAtSign);
+    List<String> otherResponse = await _atClientService.getKeys(sharedBy: otherAtSign);
+    // print('.' + conf.namespace + sharedBySign);
+
+    print('MY RESPONSE: $myResponse');
+    print('OTHER RESPONSE: $otherResponse');
+
+    if (myResponse.length > 0) {
+      myList = myResponse.map((key) {
+        print('MY KEY:$key');
+        return key
+            .replaceAll('.' + conf.namespace + myAtSign, '')
+            .replaceAll(otherAtSign + ':', '');
+      }).toList();
+
+      for (int i = 0; i < myList.length; i++) {
+        String message = await lookUpValue(myList[i], myAtSign, otherAtSign);
+        // print(message);
         Map<String, String> map = {
-          'content': scanList[i],
-          'morse': scanList[i].toMorse(),
+          'timestamp': myList[i],
+          'from': myAtSign,
+          'to': otherAtSign,
+          'content': message,
+          'morse': message.toMorse(),
         };
 
         mapList.add(map);
       }
 
-      print(scanList);
+      print('MY LIST: $myList');
     } else {
-      scanList = [];
+      myList = [];
     }
+
+    if (otherResponse.length > 0) {
+      List<String> otherList = otherResponse.map((key) {
+        print('OTHER KEY:$key');
+        return key.replaceAll('.' + conf.namespace + otherAtSign, '');
+        // .replaceAll(myAtSign + ':', '');
+      }).toList();
+
+      // print(otherList.length);
+      print('OTHER LIST:: $otherList');
+
+      for (int i = 0; i < otherList.length; i++) {
+        String message = await lookUpValue(otherList[i], otherAtSign, myAtSign);
+        print(message);
+        Map<String, String> map = {
+          'timestamp': otherList[i],
+          'from': otherAtSign,
+          'to': myAtSign,
+          'content': message,
+          'morse': message.toMorse(),
+        };
+
+        mapList.add(map);
+      }
+
+      print('OTHER LIST: $otherList');
+    }
+
+    mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
+
+    print(mapList);
+
     return mapList;
   }
 
-  Future<String> lookUpValue(String messageKey, String sharedFrom) async {
+  Future<String> lookUpValue(String messageKey, String sharedFrom, String sharedTo) async {
+    print(messageKey);
     if (messageKey != null) {
-      AtKey lookup = AtKey();
-      lookup.key = messageKey;
-      lookup.sharedWith = sharedFrom;
+      AtKey lookup = AtKey()
+        ..key = messageKey
+        ..sharedBy = sharedFrom
+        ..sharedWith = sharedTo;
 
       String response = await _atClientService.get(lookup);
 
