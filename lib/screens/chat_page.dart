@@ -46,6 +46,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    // print('FROM: ${widget.userAtSign}, TO: ${widget.otherAtSign}');
+    print('refreshed');
 
     return GestureDetector(
       onTap: () {
@@ -107,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Expanded(
               child: FutureBuilder(
-                future: database.retrieveData(widget.otherAtSign),
+                future: database.retrieveData(widget.userAtSign, widget.otherAtSign),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Map<String, String>> messageListMap = snapshot.data;
@@ -115,30 +117,55 @@ class _ChatPageState extends State<ChatPage> {
                       reverse: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
-                        String morseValue = messageListMap[index]['morse'] ?? '---';
+                        String timestamp = messageListMap[index]['timestamp'];
                         String message = messageListMap[index]['content'];
+                        String morseValue = messageListMap[index]['morse'] ?? '---';
+                        String from = messageListMap[index]['from'] ?? widget.userAtSign;
+                        String to = messageListMap[index]['to'] ?? widget.otherAtSign;
 
-                        return Align(
-                          alignment: Alignment.centerRight,
-                          child: Wrap(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Container(
-                                  width: screenWidth / 1.5,
-                                  color: CustomColors.medium,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      showMorse ? morseValue : message,
-                                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                        return from == widget.userAtSign
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: Wrap(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Container(
+                                        width: screenWidth / 1.5,
+                                        color: CustomColors.medium,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            showMorse ? morseValue : message,
+                                            style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
+                              )
+                            : Align(
+                                alignment: Alignment.centerLeft,
+                                child: Wrap(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Container(
+                                        width: screenWidth / 1.5,
+                                        color: CustomColors.medium.withOpacity(0.6),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            showMorse ? morseValue : message,
+                                            style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                       },
                     );
                   }
@@ -175,12 +202,10 @@ class _ChatPageState extends State<ChatPage> {
                         textInputAction: TextInputAction.done,
                         cursorColor: CustomColors.highlight,
                         autofocus: false,
-                        onChanged: (value) {
+                        onSubmitted: (value) {
                           setState(() {
                             _textMessage = value;
                           });
-                        },
-                        onSubmitted: (value) {
                           _textFocusNodeMessage.unfocus();
                         },
                         style: TextStyle(color: Colors.white),
@@ -248,9 +273,7 @@ class _ChatPageState extends State<ChatPage> {
                                               messageFrom: widget.userAtSign,
                                               messageTo: widget.otherAtSign)
                                           .whenComplete(() {
-                                        setState(() {
-                                          _isStoring = false;
-                                        });
+                                        print('MESSAGE SENT!');
                                       });
 
                                       // database.sendMessage(
@@ -261,7 +284,9 @@ class _ChatPageState extends State<ChatPage> {
                                       _textControllerMessage.clear();
                                       _textMessage = '';
 
-                                      setState(() {});
+                                      setState(() {
+                                        _isStoring = false;
+                                      });
                                     }
                                   : null,
                             ),
