@@ -11,6 +11,9 @@ class Database {
       DateTime currentTimestamp = DateTime.now();
 
       print(currentTimestamp.millisecondsSinceEpoch.toString());
+      message = message.replaceAll(' ', '/');
+
+      // print(message);
 
       AtKey pair = AtKey()
         ..key = '${currentTimestamp.millisecondsSinceEpoch}-$message'
@@ -50,7 +53,7 @@ class Database {
           List<String> timeMessage = myList[i].split('-');
 
           String timestampInMillisecondSinceEpoch = timeMessage[0];
-          String messageString = timeMessage[1];
+          String messageString = timeMessage[1].replaceAll('/', ' ');
 
           Map<String, String> map = {
             'timestamp': timestampInMillisecondSinceEpoch,
@@ -83,7 +86,7 @@ class Database {
         List<String> timeMessage = otherList[i].split('-');
 
         String timestampInMillisecondSinceEpoch = timeMessage[0];
-        String messageString = timeMessage[1];
+        String messageString = timeMessage[1].replaceAll('/', ' ');
 
         Map<String, String> map2 = {
           'timestamp': timestampInMillisecondSinceEpoch,
@@ -101,7 +104,7 @@ class Database {
       otherList = [];
     }
 
-    // mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
+    mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
 
     print('FULL LIST : $mapList');
 
