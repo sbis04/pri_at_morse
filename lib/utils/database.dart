@@ -13,7 +13,7 @@ class Database {
       print(currentTimestamp.millisecondsSinceEpoch.toString());
 
       AtKey pair = AtKey()
-        ..key = '${currentTimestamp.millisecondsSinceEpoch}'
+        ..key = '${currentTimestamp.millisecondsSinceEpoch}-$message'
         ..sharedBy = messageFrom
         ..sharedWith = messageTo;
 
@@ -28,7 +28,7 @@ class Database {
     // print('HELLO:$sharedBySign');
     List<Map<String, String>> mapList = [];
     List<String> myList;
-    // List<String> otherList;
+    List<String> otherList;
 
     List<String> myResponse = await _atClientService.getKeys(sharedBy: myAtSign);
     List<String> otherResponse = await _atClientService.getKeys(sharedBy: otherAtSign);
@@ -38,26 +38,33 @@ class Database {
     print('OTHER RESPONSE: $otherResponse');
 
     if (myResponse.length > 0) {
-      myList = myResponse.map((key) {
-        print('MY KEY:$key');
-        return key
-            .replaceAll('.' + conf.namespace + myAtSign, '')
-            .replaceAll(otherAtSign + ':', '');
-      }).toList();
+      if (myResponse.isNotEmpty) {
+        myList = myResponse.map((key) {
+          // print('MY KEY:$key');
+          return key
+              .replaceAll('.' + conf.namespace + myAtSign, '')
+              .replaceAll(otherAtSign + ':', '');
+        }).toList();
 
-      for (int i = 0; i < myList.length; i++) {
-        String message = await lookUpValue(myList[i], myAtSign, otherAtSign);
-        // print(message);
-        Map<String, String> map = {
-          'timestamp': myList[i],
-          'from': myAtSign,
-          'to': otherAtSign,
-          'content': message,
-          'morse': message.toMorse(),
-        };
+        for (int i = 0; i < myList.length; i++) {
+          List<String> timeMessage = myList[i].split('-');
 
-        mapList.add(map);
+          String timestampInMillisecondSinceEpoch = timeMessage[0];
+          String messageString = timeMessage[1];
+
+          Map<String, String> map = {
+            'timestamp': timestampInMillisecondSinceEpoch,
+            'from': myAtSign,
+            'to': otherAtSign,
+            'content': messageString,
+            'morse': messageString.toMorse(),
+          };
+
+          mapList.add(map);
+        }
       }
+
+      // now contains "timestamp::message"
 
       print('MY LIST: $myList');
     } else {
@@ -65,53 +72,56 @@ class Database {
     }
 
     if (otherResponse.length > 0) {
-      List<String> otherList = otherResponse.map((key) {
-        print('OTHER KEY:$key');
+      otherList = otherResponse.map((key) {
         return key.replaceAll('.' + conf.namespace + otherAtSign, '');
         // .replaceAll(myAtSign + ':', '');
       }).toList();
 
-      // print(otherList.length);
-      print('OTHER LIST:: $otherList');
+      print('OTHER LIST: $otherList');
 
       for (int i = 0; i < otherList.length; i++) {
-        String message = await lookUpValue(otherList[i], otherAtSign, myAtSign);
-        print(message);
-        Map<String, String> map = {
-          'timestamp': otherList[i],
+        List<String> timeMessage = otherList[i].split('-');
+
+        String timestampInMillisecondSinceEpoch = timeMessage[0];
+        String messageString = timeMessage[1];
+
+        Map<String, String> map2 = {
+          'timestamp': timestampInMillisecondSinceEpoch,
           'from': otherAtSign,
           'to': myAtSign,
-          'content': message,
-          'morse': message.toMorse(),
+          'content': messageString,
+          'morse': messageString.toMorse(),
         };
 
-        mapList.add(map);
+        mapList.add(map2);
       }
 
-      print('OTHER LIST: $otherList');
+      // print('OTHER LIST: $otherList');
+    } else {
+      otherList = [];
     }
 
-    mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
+    // mapList.sort((a, b) => (int.parse(b['timestamp'])).compareTo(int.parse(a['timestamp'])));
 
-    print(mapList);
+    print('FULL LIST : $mapList');
 
     return mapList;
   }
 
-  Future<String> lookUpValue(String messageKey, String sharedFrom, String sharedTo) async {
-    print(messageKey);
-    if (messageKey != null) {
-      AtKey lookup = AtKey()
-        ..key = messageKey
-        ..sharedBy = sharedFrom
-        ..sharedWith = sharedTo;
+  // Future<String> lookUpValue(String messageKey, String sharedFrom, String sharedTo) async {
+  //   print(messageKey);
+  //   if (messageKey != null) {
+  //     AtKey lookup = AtKey()
+  //       ..key = messageKey
+  //       ..sharedBy = sharedFrom
+  //       ..sharedWith = sharedTo;
 
-      String response = await _atClientService.get(lookup);
+  //     String response = await _atClientService.get(lookup);
 
-      if (response != null) {
-        return response;
-      }
-    }
-    return null;
-  }
+  //     if (response != null) {
+  //       return response;
+  //     }
+  //   }
+  //   return null;
+  // }
 }
